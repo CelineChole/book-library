@@ -48,31 +48,6 @@ const exit = () => {
   console.log("Come back soon");
 };
 
-const addNewFavorite = async () => {
-  let test = true;
-  while (test) {
-    const userInput = await getInput(
-      `\nChoose an option: \n(S)earch for another book \n(A)dd a book to your reading list \n(E)xit`
-    );
-
-    switch (userInput) {
-      case ("S", "s"):
-        const searchTerm = await getInput("What do you want to search for?");
-        books.push(await fetchBooks(searchTerm));
-        break;
-      case ("A", "a"):
-        await addFavorite();
-        test = false;
-        break;
-      case ("E", "e"):
-        exit();
-        break;
-      default:
-        break;
-    }
-  }
-};
-
 const searchBookMenu = async () => {
   let input = "";
   input = await getInput(

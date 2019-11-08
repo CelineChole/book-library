@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/CelineChole/book-library#readme",
   "dependencies": {
+    "chalk": "^2.4.2",
     "node-fetch": "^2.6.0"
   }
 }

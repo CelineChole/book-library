@@ -161,14 +161,14 @@ const displayReadingList = async () => {
       switch (userInput) {
         case ("S", "s"):
           const searchTerm = await getInput("What do you want to search for?");
-          books.push(await fetchBooks(searchTerm))
+          books.push(await fetchBooks(searchTerm));
           const addThebook = await getInput("add book 1-5 or (S)earch again??");
-            if (addThebook === "S" || addThebook === "s") {
-              books = new Array();
-              await fetchBooks(books);
-            } else {
-              await addFavorite(addThebook);
-            }
+          if (addThebook === "S" || addThebook === "s") {
+            books = new Array();
+            await fetchBooks(books);
+          } else {
+            await addFavorite(addThebook);
+          }
           break;
         case ("R", "r"):
           await removeFavorite();

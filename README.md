@@ -1,4 +1,4 @@
-# Reading List
+#Reading List
 
 To use this reading list, clone the repository.
 Open the command line, navigate to the folder and enter `node index`

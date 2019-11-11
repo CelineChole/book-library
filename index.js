@@ -1,27 +1,18 @@
 const fetch = require("node-fetch");
+const fs = require("fs");
 const chalk = require("chalk");
 const readline = require("readline").createInterface({
   input: process.stdin,
   output: process.stdout
 });
 
-let books = [];
-let readingList = [];
+const loadReadingList = () => {
+  const raw = fs.readFileSync("books.json");
+  return JSON.parse(raw);
+};
 
-// let readingList = [
-//   {
-//     id: 1,
-//     title: "Pride and Prejudice",
-//     author: "Jane Austen",
-//     publisher: "super publisher"
-//   },
-//   {
-//     id: 2,
-//     title: "1984",
-//     author: "George Orwell",
-//     publisher: "Publisher 2"
-//   }
-// ];
+let books = [];
+let readingList = loadReadingList();
 
 const getInput = question => {
   return new Promise(resolve => {
@@ -44,6 +35,8 @@ const addFavorite = async book => {
 };
 
 const exit = () => {
+  let dataToSave = JSON.stringify(readingList);
+  fs.writeFileSync("books.json", dataToSave);
   console.log("Come back soon");
   process.exit();
 };

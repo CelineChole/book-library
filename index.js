@@ -6,28 +6,27 @@ const readline = require("readline").createInterface({
 });
 
 let books = [];
+let readingList = [];
 
-// let readingList = [];
-
-let readingList = [
-  {
-    id: 1,
-    title: "Pride and Prejudice",
-    author: "Jane Austen",
-    publisher: "super publisher"
-  },
-  {
-    id: 2,
-    title: "1984",
-    author: "George Orwell",
-    publisher: "Publisher 2"
-  }
-];
+// let readingList = [
+//   {
+//     id: 1,
+//     title: "Pride and Prejudice",
+//     author: "Jane Austen",
+//     publisher: "super publisher"
+//   },
+//   {
+//     id: 2,
+//     title: "1984",
+//     author: "George Orwell",
+//     publisher: "Publisher 2"
+//   }
+// ];
 
 const getInput = question => {
   return new Promise(resolve => {
     readline.question(chalk`${chalk.bold(question)}\n> `, answer => {
-      resolve(answer);
+      resolve(answer.toLowerCase());
     });
   });
 };
@@ -46,39 +45,50 @@ const addFavorite = async book => {
 
 const exit = () => {
   console.log("Come back soon");
+  process.exit();
+};
+
+const mainMenu = async () => {
+  let input = "";
+  while (true) {
+    input = await getInput(
+      "Hey you are new here do you want to (S)earch for books or (E)xit?"
+    );
+    switch (input) {
+      case "e":
+        exit();
+      case "s":
+        await searchBookMenu();
+        break;
+      default:
+        break;
+    }
+  }
 };
 
 const searchBookMenu = async () => {
-  let input = "";
-  input = await getInput(
-    "Hey you are new here do you want to (S)earch for books or (E)xit?"
-  ); // ask user for input
-  while (input !== "E" && input !== "e") {
+  while (true) {
     const searchTerm = await getInput("What do you want to search for?");
-    if (input === "S" || input === "s") {
-      books.push(await fetchBooks(searchTerm));
-      if (books.length === 0) {
-        console.log("No books sorry");
+    if (searchTerm === "") {
+      continue;
+    }
+    books.push(await fetchBooks(searchTerm));
+    if (books.length === 0) {
+      console.log("No books sorry");
+    } else {
+      const addThebook = await getInput("add book 1-5 or (S)earch again?");
+      if (addThebook === "s") {
+        await fetchBooks(books);
       } else {
-        const addThebook = await getInput("add book 1-5 or (S)earch again??");
-        if (addThebook === "S" || addThebook === "s") {
-          books = new Array();
-          await fetchBooks(books);
-        } else {
+        const bookNumber = Number(addThebook);
+        if (bookNumber && (bookNumber >= 1 && bookNumber <= 5)) {
           await addFavorite(addThebook);
+        } else {
+          console.log("Invalid input");
         }
       }
     }
   }
-  await exit();
-
-  // returns
-  // switch, if they say search...
-  // books = await fetchBooks(userInput)
-  // displayBooks(books)
-  // if books.length - ask user if they want to add one
-
-  // else loop to the top...
 };
 
 const fetchBooks = async userInput => {
@@ -88,22 +98,29 @@ const fetchBooks = async userInput => {
     );
     const json = await result.json();
     const booksList = await json.items.map(bookList => bookList.volumeInfo);
-    await booksList.map((book, id) => {
+    books = booksList.map((book, id) => {
       let publisher;
       if (book.publisher === undefined) {
         publisher = "Unknown publisher";
       } else {
         publisher = book.publisher;
       }
-      books.push([id, book.title, book.authors, publisher]);
+      let author;
+      if (book.authors === undefined) {
+        author = "No author";
+      } else {
+        author = book.authors;
+      }
+
       console.log(
-        `${chalk.blueBright(`[${id + 1}]`)} ${book.title} ${
-          book.authors[0]
-        } ${publisher}`
+        `${chalk.blueBright(`[${id + 1}]`)} ${
+          book.title
+        } ${author} ${publisher}`
       );
+      return [id, book.title, author, publisher];
     });
-  } catch {
-    console.log("No other book found");
+  } catch (err) {
+    console.error("No other book found", err);
   }
 };
 
@@ -145,28 +162,22 @@ const displayReadingList = async () => {
             await addFavorite(addThebook);
           }
           break;
-        case ("R", "r"):
+        case "r":
           await removeFavorite();
           break;
-        case ("E", "e"):
+        case "e":
           exit();
-          return;
         default:
           break;
       }
     } else {
-      await searchBookMenu();
+      await mainMenu();
     }
   }
 };
 
 const main = async () => {
-  // welcome
   await displayReadingList();
   readline.close();
 };
 main();
-
-// to be fixed
-// - if no reading list, need to handle if user doesn't type s or e
-// - handle multiple authors

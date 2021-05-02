@@ -2,7 +2,7 @@
 
 To use this reading list, clone the repository.
 Open the command line, navigate to the folder and enter `node index`
-If it is your first tims using this you should see the below message: 'Hey you are new here do you want to (S)earch for books or (E)xit?'
+If it is your first time using this you should see the below message: 'Hey you are new here do you want to (S)earch for books or (E)xit?'
 
 To navigate, enter the letter indicated in parentheses, in the above example, e (or E) would exit the app, while s (or S) would allow you to search.
 
